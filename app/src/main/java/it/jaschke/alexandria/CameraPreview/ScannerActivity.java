@@ -38,11 +38,12 @@ public class ScannerActivity extends Activity implements ZXingScannerView.Result
         // Do something with the result here
         Log.v("SCANNER", rawResult.getText()); // Prints scan results
         Log.v("SCANNER", rawResult.getBarcodeFormat().toString()); // Prints the scan format (qrcode, pdf417 etc.)
-        this.onStop();
+
         Intent bookIntent = new Intent(this, BookService.class);
         bookIntent.putExtra(BookService.EAN, rawResult.getText());
         bookIntent.setAction(BookService.FETCH_BOOK);
-        this.startService(bookIntent);
+        startService(bookIntent);
+        this.finish();
         //AddBook.this.restartLoader();
     }
 
