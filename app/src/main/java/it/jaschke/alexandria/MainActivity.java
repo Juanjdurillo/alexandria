@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,6 +14,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +23,31 @@ import android.widget.Toast;
 import it.jaschke.alexandria.api.Callback;
 
 
-public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, Callback {
+public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks, Callback  {
+
+    private class NetworkReceiver extends BroadcastReceiver {
+
+        MainActivity ref = null;
+
+        public NetworkReceiver(MainActivity parameter) {
+            ref = parameter;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (netWorkConnected!=Utility.isNetworkConnected(ref)) {
+                netWorkConnected = Utility.isNetworkConnected(ref);
+                Fragment fragment = new AddBook();
+
+                ref.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.container, fragment)
+                        .addToBackStack((String) title)
+                        .commit();
+            }
+        }
+
+    }
+
 
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
@@ -32,6 +59,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
      */
     private CharSequence title;
     public static boolean IS_TABLET = false;
+    private static boolean netWorkConnected;
     private BroadcastReceiver messageReciever;
 
     public static final String MESSAGE_EVENT = "MESSAGE_EVENT";
@@ -40,6 +68,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        netWorkConnected = Utility.isNetworkConnected(this);
         IS_TABLET = isTablet();
         if(IS_TABLET){
             setContentView(R.layout.activity_main_tablet);
@@ -151,6 +180,14 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     }
 
+    @Override
+    public void onResume() {
+        this.registerReceiver(new NetworkReceiver(this),new IntentFilter(
+                ConnectivityManager.CONNECTIVITY_ACTION));
+        super.onResume();
+    }
+
+
     private class MessageReciever extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -159,6 +196,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             }
         }
     }
+
+
 
     public void goBack(View view){
         getSupportFragmentManager().popBackStack();
