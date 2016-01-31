@@ -28,7 +28,7 @@
     <string name="status">status</string>
     <string name="server_down">Server not accessible in this moment. The device cannot connect to the Internet or the server is down. Try again later.</string>
     <string name="book_not_found">Book not found.</string>
-
+    <string name="ISBN">isbn</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="about_text">This application gets book information from a Google API. All titles, cover images, and author information come from there.

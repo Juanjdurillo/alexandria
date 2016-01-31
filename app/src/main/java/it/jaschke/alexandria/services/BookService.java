@@ -54,7 +54,6 @@ public class BookService extends IntentService {
 
     public static final String FETCH_BOOK = "it.jaschke.alexandria.services.action.FETCH_BOOK";
     public static final String DELETE_BOOK = "it.jaschke.alexandria.services.action.DELETE_BOOK";
-
     public static final String EAN = "it.jaschke.alexandria.services.extra.EAN";
 
     public BookService() {
@@ -268,12 +267,22 @@ public class BookService extends IntentService {
         }
     }
 
-    static private void setStatus(Context c, @BookStatus int status){
+    static public void setStatus(Context c, @BookStatus int status){
         Log.e("ChangingNOW","new status "+status);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
         SharedPreferences.Editor spe = sp.edit();
         spe.putInt(c.getString(R.string.status), status);
         spe.commit();
     }
+
+    static public void setStatus(Context c, String status){
+        Log.e("ChangingNOW","new status "+status);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences.Editor spe = sp.edit();
+        spe.putString(c.getString(R.string.ISBN), status);
+        spe.commit();
+
+    }
+
 
 }
